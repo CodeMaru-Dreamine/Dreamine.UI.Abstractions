@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+
+		<PackageId>Dreamine.UI.Abstractions</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Dreamine Core Team</Authors>
+		<Company>Dreamine</Company>
+		<Description>Abstractions and interfaces for the Dreamine WPF UI component library (Popup, VirtualKeyboard).</Description>
+		<PackageTags>dreamine;wpf;ui;abstractions;popup;virtualkeyboard</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/CodeMaru-Dreamine/Dreamine.UI.Abstractions</RepositoryUrl>
+		<Title>Dreamine.UI.Abstractions</Title>
+		<Copyright>© 2025 Dreamine Core Team. All rights reserved.</Copyright>
+		<PackageProjectUrl>https://github.com/CodeMaru-Dreamine/Dreamine.MVVM.FullKit</PackageProjectUrl>
+	</PropertyGroup>
+
+</Project>

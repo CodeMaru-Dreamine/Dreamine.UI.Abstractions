@@ -1,6 +1,6 @@
 namespace Dreamine.UI.Abstractions.VirtualKeyboard;
 
-public enum eVkLayout
+public enum VkLayout
 {
     Text,
     Numeric,

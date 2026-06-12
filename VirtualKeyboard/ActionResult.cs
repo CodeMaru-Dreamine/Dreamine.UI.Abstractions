@@ -1,6 +1,6 @@
 namespace Dreamine.UI.Abstractions.VirtualKeyboard;
 
-public enum eActionResult
+public enum ActionResult
 {
     OK,
     NG,

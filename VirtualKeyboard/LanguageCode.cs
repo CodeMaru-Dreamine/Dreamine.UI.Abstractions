@@ -1,6 +1,6 @@
 namespace Dreamine.UI.Abstractions.VirtualKeyboard;
 
-public enum eLanguageCode
+public enum LanguageCode
 {
     en_US,
     ko_KR,

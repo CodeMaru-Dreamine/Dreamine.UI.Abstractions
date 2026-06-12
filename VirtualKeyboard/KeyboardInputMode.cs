@@ -1,6 +1,6 @@
 namespace Dreamine.UI.Abstractions.VirtualKeyboard;
 
-public enum eKeyboardInputMode
+public enum KeyboardInputMode
 {
     Full,
     Numeric

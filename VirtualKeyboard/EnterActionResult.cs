@@ -19,11 +19,17 @@ public class EnterActionResult
 
     public void Show(TextBox textBox)
     {
-        Application.Current.Dispatcher.Invoke(() =>
+        void Apply()
         {
             textBox.Text       = Message;
             textBox.Foreground = Result == ActionResult.OK ? Brushes.Black : Brushes.Red;
-        });
+        }
+
+        var dispatcher = Application.Current.Dispatcher;
+        if (dispatcher.CheckAccess())
+            Apply();
+        else
+            dispatcher.BeginInvoke(Apply);
     }
 }
 

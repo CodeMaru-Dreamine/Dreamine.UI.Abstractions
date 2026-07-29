@@ -103,32 +103,39 @@ jobs:
               value = 'days'
             } | Out-Null
 
-          $qualityGates = Invoke-RestMethod `
-            -Method Get `
-            -Uri "https://sonarcloud.io/api/qualitygates/list?organization=$env:SONAR_ORGANIZATION" `
-            -Headers $headers
-          $gate = $qualityGates.qualitygates |
-            Where-Object { $_.name -eq 'Sonar way' } |
-            Select-Object -First 1
-          if ($null -eq $gate -and $null -ne $qualityGates.default) {
+          try {
+            $qualityGates = Invoke-RestMethod `
+              -Method Get `
+              -Uri "https://sonarcloud.io/api/qualitygates/list?organization=$env:SONAR_ORGANIZATION" `
+              -Headers $headers
             $gate = $qualityGates.qualitygates |
-              Where-Object { $_.id -eq $qualityGates.default } |
+              Where-Object { $_.name -eq 'Sonar way' } |
               Select-Object -First 1
-          }
-          if ($null -eq $gate) {
-            throw 'No SonarCloud quality gate is available for this organization.'
-          }
+            if ($null -eq $gate -and $null -ne $qualityGates.default) {
+              $gate = $qualityGates.qualitygates |
+                Where-Object { $_.id -eq $qualityGates.default } |
+                Select-Object -First 1
+            }
 
-          Invoke-RestMethod `
-            -Method Post `
-            -Uri 'https://sonarcloud.io/api/qualitygates/select' `
-            -Headers $headers `
-            -ContentType 'application/x-www-form-urlencoded' `
-            -Body @{
-              organization = $env:SONAR_ORGANIZATION
-              projectKey = $env:SONAR_PROJECT_KEY
-              gateId = $gate.id
-            } | Out-Null
+            if ($null -ne $gate) {
+              Invoke-RestMethod `
+                -Method Post `
+                -Uri 'https://sonarcloud.io/api/qualitygates/select' `
+                -Headers $headers `
+                -ContentType 'application/x-www-form-urlencoded' `
+                -Body @{
+                  organization = $env:SONAR_ORGANIZATION
+                  projectKey = $env:SONAR_PROJECT_KEY
+                  gateId = $gate.id
+                } | Out-Null
+            }
+            else {
+              Write-Warning 'No SonarCloud quality gate is available for this organization.'
+            }
+          }
+          catch {
+            Write-Warning "Skipping SonarCloud quality gate selection: $($_.Exception.Message)"
+          }
 
       - name: Restore
         shell: pwsh

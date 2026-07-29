@@ -2,12 +2,12 @@ namespace Dreamine.UI.Abstractions.VirtualKeyboard;
 
 public class KeyData
 {
-    public string DefaultKey { get; set; } = string.Empty;
-    public string ShiftKey   { get; set; } = string.Empty;
-    public string KorKey     { get; set; } = string.Empty;
-    public string KorShiftKey { get; set; } = string.Empty;
-    public string ChnKey     { get; set; } = string.Empty;
-    public string ChnShiftKey { get; set; } = string.Empty;
+    public string DefaultKey { get; set; }
+    public string ShiftKey   { get; set; }
+    public string KorKey     { get; set; }
+    public string KorShiftKey { get; set; }
+    public string ChnKey     { get; set; }
+    public string ChnShiftKey { get; set; }
 
     public KeyData(
         string defaultKey = "", string shiftKey = "",

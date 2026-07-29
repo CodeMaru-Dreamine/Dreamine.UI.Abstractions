@@ -103,6 +103,17 @@ jobs:
               value = 'days'
             } | Out-Null
 
+          Invoke-RestMethod `
+            -Method Post `
+            -Uri 'https://sonarcloud.io/api/qualitygates/select' `
+            -Headers $headers `
+            -ContentType 'application/x-www-form-urlencoded' `
+            -Body @{
+              organization = $env:SONAR_ORGANIZATION
+              projectKey = $env:SONAR_PROJECT_KEY
+              gateName = 'Sonar way'
+            } | Out-Null
+
       - name: Restore
         shell: pwsh
         run: dotnet restore src/UI.Abstractions/tests/Dreamine.UI.Abstractions.Tests/Dreamine.UI.Abstractions.Tests.csproj

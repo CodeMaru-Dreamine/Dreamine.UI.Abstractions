@@ -1,163 +1,113 @@
-<!--!
-\file README.md
-\brief Dreamine.UI.Abstractions - Platform-agnostic UI contract interfaces and enumerations for Dreamine UI components.
-\author Dreamine Core Team
-\date 2026-06-12
-\version 1.0.0
--->
-
 # Dreamine.UI.Abstractions
 
-**Dreamine.UI.Abstractions** defines the platform-agnostic contracts, interfaces, and enumerations shared across all Dreamine UI packages.
+![CI](https://github.com/CodeMaru-Dreamine/Dreamine.UI.Abstractions/actions/workflows/ci.yml/badge.svg?branch=main)
+![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.UI.Abstractions&metric=alert_status)
+![security](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.UI.Abstractions&metric=security_rating)
+![coverage](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.UI.Abstractions&metric=coverage)
 
-It contains no WPF-specific code.  
-Concrete implementations live in platform-specific packages such as `Dreamine.UI.Wpf.Equipment`.
+![license](https://img.shields.io/badge/license-MIT-blue)
+![.NET](https://img.shields.io/badge/.NET-8-blueviolet)
+![WPF](https://img.shields.io/badge/WPF-contracts-blue)
+![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2022%20%7C%202026-purple)
 
-[➡️ 한국어 문서 보기](./README_KO.md)
+![nuget](https://img.shields.io/nuget/v/Dreamine.UI.Abstractions?label=nuget)
+![downloads](https://img.shields.io/nuget/dt/Dreamine.UI.Abstractions?label=downloads)
+[![Docs](https://img.shields.io/badge/%F0%9F%93%98%20Docs-dreamine.kr-blue)](https://dreamine.kr/libraries?lang=en)
+[![Guide](https://img.shields.io/badge/%F0%9F%93%98%20Guide-dreamine.kr-blue)](https://dreamine.kr/guide?lang=en)
+[![Playground](https://img.shields.io/badge/%F0%9F%A7%AA%20Playground-dreamine.kr-blueviolet)](https://dreamine.kr/playground?lang=en)
+[![Book](https://img.shields.io/badge/%F0%9F%93%96%20Book-Practical%20MVVM%20Architecture-black)](https://bookk.co.kr/bookStore/69c0f1b41461ec1ae849a0f6)
 
----
+`Dreamine.UI.Abstractions` defines the shared WPF-facing UI contracts used by Dreamine popup and virtual keyboard packages.
 
-## What this library solves
+[한국어 문서](./README_KO.md)
 
-UI component contracts need to be defined independently of any rendering platform so that:
+## Package Role
 
-- abstractions can be referenced without pulling in WPF assemblies
-- business-layer code can depend on interfaces instead of concrete UI controls
-- platform-specific packages implement the contracts without circular dependencies
+This package keeps UI implementation packages decoupled from application code. Applications can depend on a stable contract assembly, while concrete WPF packages provide the actual windows, controls, resources, and behavior.
 
----
+```text
+Application Code
+       ↓
+Dreamine.UI.Abstractions
+       ↓
+Dreamine.UI.Wpf.* implementations
+```
 
 ## Key Features
 
-- Platform-agnostic popup service interface (`IPopupService`)
-- Virtual keyboard layout and input mode enumerations
-- Language code enumeration for keyboard localization
-- Action result enumeration for virtual keyboard Enter-key providers
-- No WPF / UI framework dependency
-
----
+- Popup service contract for blink popup windows.
+- Popup option model with WPF owner, size, color, and content boundary types.
+- Virtual keyboard layout, input mode, language, and Enter-key result contracts.
+- Small contract surface designed for implementation packages and app-level dependency inversion.
 
 ## Requirements
 
-- **Target Framework**: `net8.0-windows`
-- No external package dependencies
-
----
+- Target Framework: `net8.0-windows`
+- WPF enabled (`UseWPF=true`)
+- No external NuGet package dependencies
 
 ## Installation
-
-### NuGet
 
 ```bash
 dotnet add package Dreamine.UI.Abstractions
 ```
 
-### PackageReference
-
 ```xml
-<PackageReference Include="Dreamine.UI.Abstractions" />
+<PackageReference Include="Dreamine.UI.Abstractions" Version="1.0.1" />
 ```
-
----
 
 ## Project Structure
 
 ```text
 Dreamine.UI.Abstractions
 ├── Popup/
-│   ├── BlinkPopupOptions.cs       — options passed to blink popup windows
-│   └── IPopupService.cs           — popup service contract
+│   ├── BlinkPopupOptions.cs
+│   └── IPopupService.cs
 └── VirtualKeyboard/
-    ├── ActionResult.cs            — Enter-key provider result
-    ├── eActionResult.cs           — (internal, replaced by ActionResult)
-    ├── IEnterActionProvider.cs    — Enter-key action provider contract
-    ├── KeyboardInputMode.cs       — text / numeric / password input mode
-    ├── LanguageCode.cs            — en_US / ko_KR / zh_CN / vi_VN
-    └── VkLayout.cs                — Text / Password / Numeric / Decimal
+    ├── ActionResult.cs
+    ├── EnterActionResult.cs
+    ├── IEnterActionProvider.cs
+    ├── KeyboardInputMode.cs
+    ├── KeyData.cs
+    ├── LanguageCode.cs
+    ├── SpecialButtonName.cs
+    └── VkLayout.cs
 ```
 
----
+## Usage
 
-## Architecture Role
-
-```text
-Dreamine.UI.Abstractions
-        │
-        ├─ Dreamine.UI.Wpf.Equipment   (popup + keyboard implementation)
-        ├─ Dreamine.UI.Wpf.Controls    (navigation + view management)
-        └─ Application Code            (depends on interfaces only)
-```
-
-This package is the lowest layer of the UI stack — no upward dependencies.
-
----
-
-## Key Interfaces
-
-### `IPopupService`
-
-Provides a platform-neutral contract for showing, closing, and querying blink popup windows.
+### Popup service
 
 ```csharp
 IPopupService popupService = DMContainer.Resolve<IPopupService>();
 
 await popupService.ShowBlinkAsync(owner, new BlinkPopupOptions
 {
-    Message = "Operation complete",
-    OkText  = "OK"
+    Title = "Warning",
+    Message = "Check equipment status",
+    OkText = "OK",
+    UseBlink = true,
+    BlinkIntervalMs = 400,
+    Color1 = Colors.Red,
+    Color2 = Colors.DarkRed
 });
 ```
 
-### `BlinkPopupOptions`
-
-Configures the appearance and behavior of blink popup windows.
+### Virtual keyboard result
 
 ```csharp
-var options = new BlinkPopupOptions
+IEnterActionProvider provider = ...;
+EnterActionResult result = provider.Execute(input);
+
+if (result.IsAccepted())
 {
-    Title          = "Warning",
-    Message        = "Check equipment status",
-    UseBlink       = true,
-    BlinkIntervalMs = 400,
-    Color1         = Colors.Red,
-    Color2         = Colors.DarkRed,
-    IsModal        = true
-};
+    result.Show(targetTextBox);
+}
 ```
-
-### `VkLayout`
-
-Selects the virtual keyboard layout presented to the user.
-
-| Value     | Description                    |
-|-----------|-------------------------------|
-| `Text`    | Full alphanumeric keyboard     |
-| `Password`| Masked text keyboard           |
-| `Numeric` | Numeric pad                    |
-| `Decimal` | Decimal number input           |
-
-### `LanguageCode`
-
-Selects the language of the virtual keyboard.
-
-| Value   | Language   |
-|---------|-----------|
-| `en_US` | English    |
-| `ko_KR` | Korean     |
-| `zh_CN` | Chinese    |
-| `vi_VN` | Vietnamese |
-
----
 
 ## Design Notes
 
-This package deliberately stays free of any rendering framework dependency.
-
-- No `System.Windows` types
-- No XAML resource references
-- Contracts only — all behavior lives in implementing packages
-
----
+This package intentionally contains WPF boundary types such as `Window`, `Size`, `Color`, `TextBox`, and `Brushes` because the contracts describe WPF UI behavior. It does not contain concrete windows, XAML resources, visual templates, or runtime UI implementations.
 
 ## License
 
